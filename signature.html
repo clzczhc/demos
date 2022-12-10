@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>签名</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      margin: 20px 0;
+    }
+
+    input[type='color'] {
+      padding: 0;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div>
+      <!-- 修改默认颜色只能通过#ffffff的形式来改，而且不能使用简写，如#fff。也不能使用white的形式 -->
+      <input type="color" class="color-picker" value="#ff0000">
+    </div>
+    <canvas></canvas>
+    <div class="btns">
+      <button onclick="handleSetSign()">签名</button>
+      <button onclick="handleSetEraser()">橡皮檫</button>
+      <button onclick="handleCancel()">取消</button>
+      <button onclick="handleSave()">保存</button>
+    </div>
+  </div>
+
+  <script>
+    let flag = 'SIGN';
+
+    const config = {
+      width: 600,
+      height: 300,
+      lineWidth: 1,
+      strokeStyle: 'red',
+      lineCap: 'round',
+      lineJoin: 'round',
+
+      eraserWidth: 20
+    };
+
+    const colorPicker = document.querySelector('.color-picker');
+    config.strokeStyle = colorPicker.value;
+
+    colorPicker.onchange = () => {
+      config.strokeStyle = colorPicker.value;
+    };
+
+    const canvas = document.querySelector('canvas');
+    canvas.width = config.width;
+    canvas.height = config.height;
+    canvas.style.border = '1px solid #ccc';
+
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = 'transparent';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 保存上次绘制的坐标和偏移量
+    const client = {
+      offsetX: 0,
+      offsetY: 0,
+      endX: 0,
+      endY: 0
+    };
+
+    const mobileStatus = (/Mobile|Android|iPhone/i.test(window.navigator.userAgent));
+
+    window.addEventListener(mobileStatus ? 'touchstart' : 'mousedown', init);
+    window.addEventListener(mobileStatus ? 'touchend' : 'mouseup', closeDraw);
+
+    function init(event) {
+      const {
+        offsetX,
+        offsetY,
+        pageX,
+        pageY
+      } = mobileStatus ? event.changedTouches[0] : event;
+
+      client.offsetX = offsetX;
+      client.offsetY = offsetY;
+      client.endX = pageX;
+      client.endY = getRealPosition(pageY);
+
+      ctx.lineWidth = config.lineWidth;
+      ctx.strokeStyle = config.strokeStyle;
+      ctx.lineCap = config.lineCap;
+      ctx.lineJoin = config.lineJoin;
+
+      ctx.beginPath();
+
+      ctx.moveTo(client.endX, client.endY);
+
+      if (flag === 'SIGN') {
+        window.removeEventListener(mobileStatus ? 'touchmove' : 'mousemove', draw);
+        window.addEventListener(mobileStatus ? 'touchmove' : 'mousemove', draw);
+        window.removeEventListener(mobileStatus ? 'touchmove' : 'mousemove', eraser);
+      } else if(flag === 'ERASER') {
+        window.removeEventListener(mobileStatus ? 'touchmove' : 'mousemove', eraser);
+        window.addEventListener(mobileStatus ? 'touchmove' : 'mousemove', eraser);
+        window.removeEventListener(mobileStatus ? 'touchmove' : 'mousemove', draw);
+      }
+    }
+
+    function draw(event) {
+      const {
+        pageX,
+        pageY
+      } = mobileStatus ? event.changedTouches[0] : event;
+
+      client.endX = pageX;
+      client.endY = getRealPosition(pageY);
+
+      ctx.lineTo(client.endX, client.endY);
+
+      ctx.stroke();
+    }
+
+    function eraser(event) {
+
+      const {
+        pageX,
+        pageY
+      } = mobileStatus ? event.changedTouches[0] : event;
+
+      client.endX = pageX;
+      client.endY = getRealPosition(pageY);
+
+      const startX = client.endX - config.eraserWidth / 2;
+      const startY = client.endY - config.eraserWidth / 2;
+
+      ctx.clearRect(startX, startY, config.eraserWidth, config.eraserWidth);
+    }
+
+    function closeDraw() {
+      ctx.closePath();
+
+      window.removeEventListener(mobileStatus ? 'touchmove' : 'mousemove', flag === 'SIGN' ? draw : eraser);
+    }
+
+    function handleSetSign() {
+      flag = 'SIGN';
+    }
+
+    function handleSetEraser() {
+      flag = 'ERASER';
+    }
+
+    function handleCancel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // function handleSave() {
+    //   const date = Date.now().toString();
+
+    //   const a = document.createElement('a');
+    //   a.download = `${date}.png`;
+    //   a.href = canvas.toDataURL();
+
+    //   a.click();
+
+    //   a.remove();
+    // }
+
+    function handleSave() {
+      canvas.toBlob(blob => {
+        // console.log(blob);
+
+        const date = Date.now().toString();
+
+        const a = document.createElement('a');
+        a.download = `${date}.png`;
+        a.href = URL.createObjectURL(blob);
+
+        a.click();
+        a.remove();
+      })
+    }
+
+    function getRealPosition(pageY) {
+      return pageY - canvas.offsetTop;
+    }
+  </script>
+</body>
+
+</html>
