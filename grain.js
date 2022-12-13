@@ -1,13 +1,25 @@
 const options = {
   width: 400,
   height: 400,
-  speed: 10
+  time: 20
 };
 
 const textOptions = {
   words: '赤蓝紫',
   font: '200px Arial'
 };
+
+const mousePosition = {
+  mouseX: 0,
+  mouseY: 0
+};
+
+/** 中心影响的半径 */
+const Radius = 100;
+/** 排斥/吸引 力度 */
+const Inten = 0.95;
+
+const canvas = document.getElementById('grain');
 
 function pointCanvas(canvas, { width, height }) {
   canvas.width = width;
@@ -40,20 +52,18 @@ function getWordPxInfo(ctx, { width, height, speed}) {
 
   const grains = [];
 
-  const gap = 4;
+  const gap = 6;
 
-  for (let x = 0; x < width; x += gap) {
-    for (let y = 0; y < height; y += gap) {
-
+  for (let y = 0; y < height; y += gap) {
+    for (let x = 0; x < width; x += gap) {
       const position = (width * y + x) * 4;   // 获取点阵信息
-      // r: imageData[potision]
-      // g: imageData[potision + 1]
-      // b: imageData[potision + 2]
-
-      const transparentIndex = position + 3;
+      const r = imageData[position];
+      const g = imageData[position + 1];
+      const b = imageData[position + 2];
+      const a = imageData[position + 3];
 
       // 判断当前像素是否有文字
-      if (imageData[transparentIndex] > 0) {
+      if (r + g + b + a > 0) {
         grains.push(
           new grain({x, y, speed})
         )
@@ -78,14 +88,14 @@ function init(points, { width, height }) {
 
 class grain {
   constructor(point) {
-    this.x = point.x;
-    this.y = point.y;
+    this.targetX = point.x;
+    this.targetY = point.y;
 
-    this.mx = Math.random() * canvas.width;
-    this.my = Math.random() * canvas.height;
+    this.x = (Math.random() * canvas.width) >> 0;
+    this.y = (Math.random() * canvas.height) >> 0;
 
     this.radius = 3;
-    this.speed = Math.random() * 40 + point.speed;
+    // this.speed = Math.random() * 40 + point.speed;
 
     this.color = `purple`;
   }
@@ -93,7 +103,7 @@ class grain {
   draw() {
     ctx.beginPath();
     ctx.fillStyle = this.color;
-    ctx.arc(this.mx, this.my, this.radius, 0, Math.PI * 2, false);
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
     ctx.fill();
 
     ctx.closePath();
@@ -101,20 +111,59 @@ class grain {
   }
 
   update() {
-    this.mx = this.mx + (this.x - this.mx) / this.speed;
-    this.my = this.my + (this.y - this.my) / this.speed;
+    const mx = this.targetX - this.x;
+    const my = this.targetY - this.y;
+
+    this.vx = mx / options.time;
+    this.vy = my / options.time;
+
+    const { mouseX, mouseY } = mousePosition;
+
+    if (mouseX && mouseY) {
+      // 计算粒子与鼠标的距离
+      let dx = mouseX - this.x;
+      let dy = mouseY - this.y;
+      let distance = Math.sqrt(dx ** 2 + dy ** 2);
+
+      // 粒子相对鼠标距离的比例，来确定收到的力度比例
+      let disPercent = Radius / distance;
+
+      // 设置阈值
+      disPercent = disPercent > 7 ? 7 : disPercent;
+
+      const angle = Math.atan2(dy, dx);
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+
+      const repX = cos * disPercent * (-Inten);  // 将力度转换为x、y方向上的速度。如果是斥力，则速度减去得到的值。否则，速度加上得到的值。（即将Inten的负号去掉，就变成吸引）
+      const repY = sin * disPercent * (-Inten);
+
+      this.vx += repX;
+      this.vy += repY;
+    }
+
+    this.x += this.vx;
+    this.y += this.vy;
   }
 }
 
-window.onload = () => {
-  options.width = document.body.clientWidth;
-  options.height = document.body.clientHeight;
+canvas.addEventListener('mousemove', (e) => {
+  const { left, top } = canvas.getBoundingClientRect();
+  const { clientX, clientY } = e;
 
-  window.canvas = document.getElementById('grain');
+  mousePosition.mouseX = clientX - left;
+  mousePosition.mouseY = clientY - top;
+});
 
-  pointCanvas(window.canvas, options);
+canvas.addEventListener('mouseleave', () => {
+  mousePosition.mouseX = 0;
+  mousePosition.mouseY = 0;
+});
 
-  const points = createVitualCvs(options);
-  init(points, options);
-}
+options.width = document.body.clientWidth;
+options.height = document.body.clientHeight;
 
+pointCanvas(canvas, options);
+
+const points = createVitualCvs(options);
+init(points, options);
