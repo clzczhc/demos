@@ -14,7 +14,27 @@
     }
 
     #container {
+      position: relative;
       height: 100%;
+    }
+
+    input { 
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, -40px);
+
+      width: 400px;
+      color: #fff;
+      font-size: 24px;
+      text-align: center;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid #fff;
+    }
+
+    input:focus-visible {
+      outline: none;
     }
   </style>
 </head>
@@ -22,6 +42,7 @@
 <body>
   <div id="container">
     <canvas id="grain"></canvas>
+    <input type="text">
   </div> 
   <script src="./grain.js"></script>
 </body>

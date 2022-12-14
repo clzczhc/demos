@@ -167,3 +167,13 @@ pointCanvas(canvas, options);
 
 const points = createVitualCvs(options);
 init(points, options);
+
+const inputEle = document.querySelector('input');
+inputEle.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter') {
+    textOptions.words = inputEle.value;
+
+    const points = createVitualCvs(options);
+    init(points, options);
+  }
+})
