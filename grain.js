@@ -17,16 +17,16 @@ const mousePosition = {
 /** 中心影响的半径 */
 const Radius = 100;
 /** 排斥/吸引 力度 */
-const Inten = 0.95;
+const Inten = 0.8;
 
 const canvas = document.getElementById('grain');
+const ctx = canvas.getContext('2d');
 
-function pointCanvas(canvas, { width, height }) {
-  canvas.width = width;
-  canvas.height = height;
-  ctx = canvas.getContext('2d');
-  return ctx;
-}
+options.width = document.body.clientWidth;
+options.height = document.body.clientHeight;
+
+canvas.width = options.width;
+canvas.height = options.height;
 
 function createVitualCvs({ width, height }) {
   const vitualCvs = document.createElement('canvas');
@@ -40,19 +40,18 @@ function createVitualCvs({ width, height }) {
   return getWordPxInfo(vitualCtx, options);
 }
 
-function initCanvas(ctx, { width, height }, { font, words }) {
-  ctx.font = font;
-  const measure = ctx.measureText(words);   // 获取文字的宽高
+function initCanvas(vitualCtx, { width, height }, { font, words }) {
+  vitualCtx.font = font;
+  const measure = vitualCtx.measureText(words);   // 获取文字的宽高
 
-  ctx.fillText(words, (width - measure.width) / 2, height / 2);
+  vitualCtx.fillText(words, (width - measure.width) / 2, height / 2);
 }
 
-function getWordPxInfo(ctx, { width, height, speed}) {
-  const imageData = ctx.getImageData(0, 0, width, height).data;
-
-  const grains = [];
+function getWordPxInfo(vitualCtx, { width, height, speed}) {
+  const imageData = vitualCtx.getImageData(0, 0, width, height).data;
 
   const gap = 6;
+  const grains = [];
 
   for (let y = 0; y < height; y += gap) {
     for (let x = 0; x < width; x += gap) {
@@ -65,7 +64,7 @@ function getWordPxInfo(ctx, { width, height, speed}) {
       // 判断当前像素是否有文字
       if (r + g + b + a > 0) {
         grains.push(
-          new grain({x, y, speed})
+          new Grain({x, y, speed})
         )
       }
     }
@@ -84,9 +83,11 @@ function init(points, { width, height }) {
   const timer = window.requestAnimationFrame(function () {
     init(points, options);
   })
+
+  return timer;
 }
 
-class grain {
+class Grain {
   constructor(point) {
     this.targetX = point.x;
     this.targetY = point.y;
@@ -145,6 +146,12 @@ class grain {
     this.x += this.vx;
     this.y += this.vy;
   }
+
+  change(targetX, targetY) {
+    
+    this.targetX = targetX;
+    this.targetY = targetY;
+  }
 }
 
 canvas.addEventListener('mousemove', (e) => {
@@ -160,20 +167,55 @@ canvas.addEventListener('mouseleave', () => {
   mousePosition.mouseY = 0;
 });
 
-options.width = document.body.clientWidth;
-options.height = document.body.clientHeight;
-
-pointCanvas(canvas, options);
-
-const points = createVitualCvs(options);
-init(points, options);
+// 浅克隆
+const points = [...createVitualCvs(options)];
+const timer = init(points, options);
 
 const inputEle = document.querySelector('input');
 inputEle.addEventListener('keyup', (e) => {
   if (e.key === 'Enter') {
     textOptions.words = inputEle.value;
 
-    const points = createVitualCvs(options);
-    init(points, options);
+    const newPoints = createVitualCvs(options);
+    changeFont(points, newPoints);
   }
-})
+});
+
+function changeFont(oldPoints, newPoints) {
+  const oldLen = oldPoints.length;
+  const newLen = newPoints.length;
+
+  for (let i = 0; i < newPoints.length; i++) {
+    const { targetX, targetY } = newPoints[i];                                           
+
+    // 如果在旧的点集里存在，则调用change改变位置。否则，新增
+    if (oldPoints[i]) {
+      oldPoints[i].change(targetX, targetY);
+    } else {
+      oldPoints[i] = new Grain({ x: targetX, y: targetY });
+    }
+  }
+
+  // 新点集比旧点击小
+  if (newLen < oldLen) {
+    oldPoints.splice(newLen, oldLen);
+  }
+
+  // 随机打算顺序，让切换更自然
+  let len = oldPoints.length;
+  while (len) {
+    const randomIndex = (Math.random() * (len--)) >> 0;
+    const randomPoint = oldPoints[randomIndex];
+
+    debugger;
+
+    const { targetX, targetY } = randomPoint;
+
+    randomPoint.targetX = oldPoints[len].targetX;
+    randomPoint.targetY = oldPoints[len].targetY;
+
+    oldPoints[len].targetX = targetX;
+    oldPoints[len].targetY = targetY;
+  }
+
+}
