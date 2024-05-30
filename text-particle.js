@@ -41,11 +41,6 @@ class Particle {
     this.x = Math.round(Math.random() * canvas.width);
     this.y = Math.round(Math.random() * canvas.height);
 
-    const mx = this.targetX - this.x;
-    const my = this.targetY - this.y;
-    this.vx = mx / options.time;
-    this.vy = my / options.time;
-
     this.radius = 3;
     this.color = `purple`;
   }
