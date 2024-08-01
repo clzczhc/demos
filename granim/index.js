@@ -26,13 +26,8 @@ const ctx = canvas.getContext("2d");
 canvas.width = 600;
 canvas.height = 300;
 
-const image = new Image();
-image.src = "../granim/bg-forest.jpg";
-ctx.globalCompositeOperation = "color-burn";
-
 function makeGradient() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
 
