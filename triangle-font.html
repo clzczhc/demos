@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      svg {
+        width: 600px;
+        height: 600px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="400"
+      height="800"
+      viewBox="0 0 400 800"
+    >
+      <path
+        id="path1"
+        fill="currentColor"
+        d="M265 164l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path2"
+        fill="currentColor"
+        d="M370 89l-53 -32l-52 -30v62v61l52 -31z"
+      />
+      <path
+        id="path3"
+        fill="currentColor"
+        d="M145 89l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path4"
+        fill="currentColor"
+        d="M25 164l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path5"
+        fill="currentColor"
+        d="M130 239l-53 -32l-52 -30v62v61l52 -31z"
+      />
+      <path
+        id="path6"
+        fill="currentColor"
+        d="M25 314l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path7"
+        fill="currentColor"
+        d="M130 389l-53 -32l-52 -30v62v61l52 -31z"
+      />
+      <path
+        id="path8"
+        fill="currentColor"
+        d="M25 464l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path9"
+        fill="currentColor"
+        d="M145 539l52 30l53 31v-61v-62l-53 30z"
+      />
+      <path
+        id="path10"
+        fill="currentColor"
+        d="M370 539l-53 -32l-52 -30v62v61l52 -31z"
+      />
+      <path
+        id="path11"
+        fill="currentColor"
+        d="M265 464l52 30l53 31v-61v-62l-53 30z"
+      />
+    </svg>
+
+    <script src="./triangle-font/anime.js"></script>
+    <script>
+      const path1s = [
+        {
+          id: "#path1",
+          d: "M25 162l52 30l53 32v-62v-61l-53 30z",
+        },
+        {
+          id: "#path2",
+          d: "M130 237l-53 30l-52 32v-62v-61l52 30z",
+        },
+        {
+          id: "#path3",
+          d: "M25 312l52 30l53 32v-62v-61l-53 30z",
+        },
+        {
+          id: "#path4",
+          d: "M130 387l-53 30l-52 32v-62v-61l52 30z",
+        },
+        {
+          id: "#path5",
+          d: "M25 462l52 30l53 32v-62v-61l-53 30z",
+        },
+        {
+          id: "#path6",
+          d: "M130 537l-53 30l-52 32v-62v-61l52 30z",
+        },
+        {
+          id: "#path7",
+          d: "M25 612l52 30l53 32v-62v-61l-53 30z",
+        },
+        {
+          id: "#path8",
+          d: "M145 687l52 -31l53 -30v61v62l-53 -32z",
+        },
+        {
+          id: "#path9",
+          d: "M370 687l-53 30l-52 32v-62v-61l52 30z",
+        },
+        {
+          id: "#path10",
+          d: "M265 612l52 30l53 32v-62v-61l-53 30z",
+        },
+        {
+          id: "#path11",
+          d: "M490 612l-53 -31l-52 -30v61v62l52 -32z",
+        },
+      ];
+
+      const path2s = [
+        {
+          id: "#path1",
+          d: "M294 137l-61 -36l-60 -34v70v72l60 -37z",
+        },
+        {
+          id: "#path2",
+          d: "M173 226l60 35l61 37v-72v-70l-61 34z",
+        },
+        {
+          id: "#path3",
+          d: "M433 221l-62 -36l-60 -35v71v71l60 -37z",
+        },
+        {
+          id: "#path4",
+          d: "M311 302l60 34l62 37v-71v-71l-62 35z",
+        },
+        {
+          id: "#path5",
+          d: "M433 388l-62 -36l-60 -34v70v72l60 -37z",
+        },
+        {
+          id: "#path6",
+          d: "M173 388l60 35l61 37v-72v-70l-61 34z",
+        },
+        {
+          id: "#path7",
+          d: "M42 475l60 34l61 37v-71v-71l-61 35z",
+        },
+        {
+          id: "#path8",
+          d: "M294 475l-61 -36l-60 -35v71v71l60 -37z",
+        },
+        {
+          id: "#path9",
+          d: "M181 558l60 35l61 37v-72v-70l-61 35z",
+        },
+        {
+          id: "#path10",
+          d: "M433 558l-62 -35l-60 -35v70v72l60 -37z",
+        },
+        {
+          id: "#path11",
+          d: "M316 636l60 34l61 37v-71v-71l-61 35z",
+        },
+      ];
+
+      const timeline = anime.timeline({
+        autoplay: true,
+        direction: "alternate",
+        loop: true,
+      });
+
+      path1s.forEach(function (path, index) {
+        timeline.add({
+          targets: path.id,
+          d: [{
+            value: path.d,
+            duration: 1000, // 转换过程1s过渡
+            easing: "easeInOutQuad"
+          }, {
+            value: path2s[index].d,
+            duration: 1000,
+            easing: "easeInOutQuad",
+          }],
+        }, 1000);    // 动画同时开始（如果没设置，那么就会是一个一个三角形依次执行
+      });
+    </script>
+  </body>
+</html>
