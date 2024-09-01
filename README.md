@@ -4,7 +4,8 @@
 
 - [粒子字体](https://www.clzczh.top/demos/text-particle.html)
 - [绘图板（电子签名）](https://www.clzczh.top/demos/signature.html)
-- [渐变动效(搭配图片)]((https://www.clzczh.top/demos/granim.html)
+- [渐变动效(搭配图片)](https://www.clzczh.top/demos/granim.html)
+- [三角形字体转换动效](https://www.clzczh.top/demos/triangle-font.html)
 
 博客：
 https://www.clzczh.top/2024/05/30/text-particle
