@@ -6,6 +6,10 @@
         width: 600px;
         height: 600px;
       }
+
+      svg path {
+        fill: none;
+      }
     </style>
   </head>
 
@@ -18,57 +22,57 @@
     >
       <path
         id="path1"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M265 164l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path2"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M370 89l-53 -32l-52 -30v62v61l52 -31z"
       />
       <path
         id="path3"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M145 89l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path4"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M25 164l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path5"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M130 239l-53 -32l-52 -30v62v61l52 -31z"
       />
       <path
         id="path6"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M25 314l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path7"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M130 389l-53 -32l-52 -30v62v61l52 -31z"
       />
       <path
         id="path8"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M25 464l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path9"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M145 539l52 30l53 31v-61v-62l-53 30z"
       />
       <path
         id="path10"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M370 539l-53 -32l-52 -30v62v61l52 -31z"
       />
       <path
         id="path11"
-        fill="currentColor"
+        stroke="#ff0000"
         d="M265 464l52 30l53 31v-61v-62l-53 30z"
       />
     </svg>
@@ -176,6 +180,7 @@
       });
 
       path1s.forEach(function (path, index) {
+
         timeline.add({
           targets: path.id,
           d: [{
@@ -184,6 +189,15 @@
             easing: "easeInOutQuad"
           }, {
             value: path2s[index].d,
+            duration: 1000,
+            easing: "easeInOutQuad",
+          }],
+          stroke: [{
+            value: '#0000ff',
+            duration: 1000, // 转换过程1s过渡
+            easing: "easeInOutQuad"
+          }, {
+            value: '#800080',
             duration: 1000,
             easing: "easeInOutQuad",
           }],
